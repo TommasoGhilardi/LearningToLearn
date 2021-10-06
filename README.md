@@ -19,8 +19,10 @@
 
 
 
-**[About the project](#about-the-project)**<br>
-**[Try for yourself](#try-for-yourself )**<br>
+- **[About the project](#about-the-project)**<br>
+  - **[The_task](#the-task)**<br>
+  - **[The_model](#the-model)**<br>
+- **[Try for yourself](#try-for-yourself )**<br>
 
 
 ## About the project:
