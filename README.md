@@ -44,9 +44,9 @@ For more information about the task and the experimental settings check __[Infan
 
 In every trial *t* of a sequence *s*, a stimulus is shown in the target location *x_(s,t)* and the probability *P(X_(s,t))*  of seeing the stimulus in any given location is updated in light of the new evidence *x_(s,t)*, starting from the initial uniform prior *γ_s*, which assumes that the target is equally likely to appear in any of the four locations. In every trial, *P(X_(s,t))* is used to compute the information gain carried by the new stimulus. Information gain, *IG* ,is quantified using the Kullback-Leibler (KL) divergence: 
 
-<p align="center" >  
-  <img src="https://bit.ly/3iBPQ7K" border="10" alt="D_{K L}=\sum P(X)_{s, t} \log \left(\frac{P(X)_{s, t}}{P(X)_{s, t-1}}\right)" width="261" height="47" />
-</p>  
+<p align="center">
+ <img src="https://latex.codecogs.com/gif.image?\dpi{100}&space;\bg_white&space;D_{K&space;L}=\sum&space;P(X)_{s,&space;t}&space;\log&space;\left(\frac{P(X)_{s,&space;t}}{P(X)_{s,&space;t-1}}\right)" title="\bg_white D_{K L}=\sum P(X)_{s, t} \log \left(\frac{P(X)_{s, t}}{P(X)_{s, t-1}}\right)" />
+</p>
 
 Information gain is assumed to vary linearly with Saccadic Latency (SL), Looking Time (LT), and Look-Away (LA). When estimating the relationship between information gain and the dependent variables, the regression coefficients (see Figure 2, in yellow) are estimated for each participant, thus taking into account individual differences. To quantify infants’ meta-learning abilities, four additional parameters *λ_α^0*, *λ_α^1*, *β_α^0*, and *β_α^1* are used to describe an exponential decay over trials. This allows us to track how the exponential decay of information gain varied across sequences, thus testing our hypothesis on up- and down-regulation of evidence   across the task. Specifically, *λ_α^0* and *λ_α^1* regulate the up-weighting across sequences of the information acquired in trials early in the sequence, while *β_α^0* and *β_α^1* regulate the down-weighting across sequences of the information acquired in trials late in the sequence. The parameter *λ_s* controls for changes in baseline attention to the task across sequences
 
