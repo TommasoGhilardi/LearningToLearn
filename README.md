@@ -37,11 +37,25 @@ Infants were presented with sequences of cue-target trials. In each sequence, th
 
 For more information about the task and the experimental settings check __[Infants tailor their attention to maximize learning](https://www.science.org/doi/10.1126/sciadv.abb5053)__
 
+### The model
+
+In every trial *t* of a sequence *s*, a stimulus is shown in the target location *x_(s,t)* and the probability *P(X_(s,t))*  of seeing the stimulus in any given location is updated in light of the new evidence *x_(s,t)*, starting from the initial uniform prior *γ_s*, which assumes that the target is equally likely to appear in any of the four locations. In every trial, *P(X_(s,t))* is used to compute the information gain carried by the new stimulus. Information gain, *IG* ,is quantified using the Kullback-Leibler (KL) divergence: 
+<p align="center">
+<img src="http://www.sciweavers.org/tex2img.php?eq=D_%7BK%20L%7D%3D%5Csum%20P%28X%29_%7Bs%2C%20t%7D%20%5Clog%20%5Cleft%28%5Cfrac%7BP%28X%29_%7Bs%2C%20t%7D%7D%7BP%28X%29_%7Bs%2C%20t-1%7D%7D%5Cright%29%0A&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="D_{K L}=\sum P(X)_{s, t} \log \left(\frac{P(X)_{s, t}}{P(X)_{s, t-1}}\right)" width="261" height="47" />
+</p>
+
+Information gain is assumed to vary linearly with Saccadic Latency (SL), Looking Time (LT), and Look-Away (LA). When estimating the relationship between information gain and the dependent variables, the regression coefficients (see Figure 2, in yellow) are estimated for each participant, thus taking into account individual differences. To quantify infants’ meta-learning abilities, four additional parameters *λ_α^0*, *λ_α^1*, *β_α^0*, and *β_α^1* are used to describe an exponential decay over trials. This allows us to track how the exponential decay of information gain varied across sequences, thus testing our hypothesis on up- and down-regulation of evidence   across the task. Specifically, *λ_α^0* and *λ_α^1* regulate the up-weighting across sequences of the information acquired in trials early in the sequence, while *β_α^0* and *β_α^1* regulate the down-weighting across sequences of the information acquired in trials late in the sequence. The parameter *λ_s* controls for changes in baseline attention to the task across sequences
+
+<p align="center">
+  <img src="https://github.com/TommasoGhilardi/LearningToLearn/blob/main/model.jpg" width="400" />
+</p>
+
+
 
 ## Try for yourself 
 
 ### Install pymc3 and its dependencies
-To facilitate the process and aim for the best reproducibility we provide the **pymc_enviroment.yml**file in the [General folder](https://github.com/TommasoGhilardi/LearningToLearn/tree/main/General). To create a conda enviroment called *pymc* run the command:  ```conda env create -f pymc_enviroment.yml``` in the conda terminal.
+To facilitate the process and aim for the best reproducibility we provide the **pymc_enviroment.yml** file in the [General folder](https://github.com/TommasoGhilardi/LearningToLearn/tree/main/General). To create a conda enviroment called *pymc* run the command:  ```conda env create -f pymc_enviroment.yml``` in the conda terminal.
 After setting the enviroment it can be accessed using ```conda activate pymc```, from here the ilde **Spyder** can be accessed running ```spyder```
 
 
