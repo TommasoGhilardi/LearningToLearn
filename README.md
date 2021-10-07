@@ -19,10 +19,11 @@
 
 
 
-- **[About the project](#about-the-project)**<br>
-  - **[The_task](#the-task)**<br>
-  - **[The_model](#the-model)**<br>
-- **[Try for yourself](#try-for-yourself )**<br>
+- **[About the project](#about-the-project)**
+  - **[The_task](#the-task)**
+  - **[The_model](#the-model)**
+- **[Try for yourself](#try-for-yourself )**
+	- **[Install pymc3](#install-pymc3-and-its-dependencies)**
 
 
 ## About the project:
@@ -30,28 +31,37 @@ Meta-learning is the ability to make use of prior experience to learn how to lea
 
 
 ### The task
-
 Infants were presented with sequences of cue-target trials. In each sequence, the cue consisted of a simple shape appearing in the middle of the screen. The target was the same shape reappearing in one of four screen quadrants around the cue location. The shape was the same across all trials of the sequence but changed across sequences. The target could appear in any location, but one location was more likely than the others. Infants could thus learn to predict the most likely target location of each sequence.
-
+<br>
 <p align="center">
   <img src="https://www.science.org/cms/10.1126/sciadv.abb5053/asset/07688eb0-7eb8-4560-ae8c-b60b72e79a1e/assets/graphic/abb5053-f1.jpeg" width="300" height="300" />
+  <em><br>Fig1 Task representation</em>
 </p>
 
-For more information about the task and the experimental settings check __[Infants tailor their attention to maximize learning](https://www.science.org/doi/10.1126/sciadv.abb5053)__
+<br>
+Three different variables from the infants’ looking behavior were extracted:
+
+1. **Look-away:** At each trial, we recorded whether infants kept looking at the screen or looked away;
+2. **Saccadic latency:** How quickly infants moved their eyes from the cue to the target location, from the moment the target appeared. Negative times (i.e., anticipations to the target location) were also possible;
+3. **Looking time:** How long infants looked at the target location, from the moment it appeared to 750ms after its disappearance.
+<br>
+
+For more information about the task and the eye-tracking processing check **[Infants tailor their attention to maximize learning](https://www.science.org/doi/10.1126/sciadv.abb5053)**
 
 
 ### The model
 
-In every trial *t* of a sequence *s*, a stimulus is shown in the target location *x_(s,t)* and the probability *P(X_(s,t))*  of seeing the stimulus in any given location is updated in light of the new evidence *x_(s,t)*, starting from the initial uniform prior *γ_s*, which assumes that the target is equally likely to appear in any of the four locations. In every trial, *P(X_(s,t))* is used to compute the information gain carried by the new stimulus. Information gain, *IG* ,is quantified using the Kullback-Leibler (KL) divergence: 
+In every trial ***t*** of a sequence ***s***, a stimulus is shown in the target location ***x_(s,t)*** and the probability  ***P(X_(s,t))***  of seeing the stimulus in any given location is updated in light of the new evidence  ***x_(s,t)***,  starting from the initial uniform prior  ***γ_s*** , which assumes that the target is equally likely to appear in any of the four locations. In every trial,  ***P(X_(s,t))***  is used to compute the information gain carried by the new stimulus. Information gain, ***IG***,  is quantified using the Kullback-Leibler (KL) divergence: 
 
 <p align="center">
  <img src="https://latex.codecogs.com/gif.image?\dpi{100}&space;\bg_white&space;D_{K&space;L}=\sum&space;P(X)_{s,&space;t}&space;\log&space;\left(\frac{P(X)_{s,&space;t}}{P(X)_{s,&space;t-1}}\right)" title="\bg_white D_{K L}=\sum P(X)_{s, t} \log \left(\frac{P(X)_{s, t}}{P(X)_{s, t-1}}\right)" />
 </p>
 
-Information gain is assumed to vary linearly with Saccadic Latency (SL), Looking Time (LT), and Look-Away (LA). When estimating the relationship between information gain and the dependent variables, the regression coefficients (see Figure 2, in yellow) are estimated for each participant, thus taking into account individual differences. To quantify infants’ meta-learning abilities, four additional parameters *λ_α^0*, *λ_α^1*, *β_α^0*, and *β_α^1* are used to describe an exponential decay over trials. This allows us to track how the exponential decay of information gain varied across sequences, thus testing our hypothesis on up- and down-regulation of evidence   across the task. Specifically, *λ_α^0* and *λ_α^1* regulate the up-weighting across sequences of the information acquired in trials early in the sequence, while *β_α^0* and *β_α^1* regulate the down-weighting across sequences of the information acquired in trials late in the sequence. The parameter *λ_s* controls for changes in baseline attention to the task across sequences
+Information gain is assumed to vary linearly with Saccadic Latency ( ***SL*** ), Looking Time ( ***LT*** ), and Look-Away ( ***LA*** ). When estimating the relationship between information gain and the dependent variables, the regression coefficients (see Figure 2, in yellow) are estimated for each participant, thus taking into account individual differences. To quantify infants’ meta-learning abilities, four additional parameters ***λ_α^0***,  ***λ_α^1***, ***β_α^0***,  and  ***β_α^1***  (see Figure 2, in green) are used to describe an exponential decay over trials. This allows us to track how the exponential decay of information gain varied across sequences, thus testing our hypothesis on up- and down-regulation of evidence   across the task. Specifically, ***λ_α^0***  and  ***λ_α^1***  regulate the up-weighting across sequences of the information acquired in trials early in the sequence, while ***β_α^0***  and  ***β_α^1***  regulate the down-weighting across sequences of the information acquired in trials late in the sequence. The parameter  ***λ_s***  controls for changes in baseline attention to the task across sequences
 
 <p align="center">
   <img src="https://github.com/TommasoGhilardi/LearningToLearn/blob/main/model.jpg" width="400" />
+  <em><br>Fig2 Model representation</em>
 </p>
 
 
