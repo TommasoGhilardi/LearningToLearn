@@ -16,10 +16,10 @@ import matplotlib.pyplot as plt
 import os
 
 #Choose sampling method (ADVI vs MCMC)
-useADVI=True
+useADVI=True  # if True ADVI will be used, if False MCMC will be used
 
 #Set directory
-os.chdir(r"C:\Users\u661121\Desktop\pymc_model")
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 # Import Saccadic Latency and Look Away Data
 data= pd.read_csv('df.txt', sep=' ')
