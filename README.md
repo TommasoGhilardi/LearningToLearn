@@ -72,6 +72,24 @@ Information gain is assumed to vary linearly with Saccadic Latency ( ***SL*** ),
 To facilitate the process and aim for the best reproducibility we provide the **pymc_enviroment.yml** file in the [General folder](https://github.com/TommasoGhilardi/LearningToLearn/tree/main/General). To create a conda enviroment called *pymc* run the command:  ```conda env create -f pymc_enviroment.yml``` in the conda terminal.
 After setting the enviroment it can be accessed using ```conda activate pymc```, from here the ilde **Spyder** can be accessed running ```spyder```
 
+### Run the model
+
+
+You can choose between two sampling methods using the handle ```useADVI```. When set to ```True``` Pymc3 will use ADVI to sample the data, if set to ```False``` Pymc3 will use MCMC ([learn more abour ADVI](https://arxiv.org/pdf/1603.00788.pdf) ).
+
+We advice to use MCMC to obtain reliable results and only use ADVI to check if the model is properly running after changes.
+
+#### Simulation
+In addition to the data we collected we provide the ```SimulateData``` function. This function allows to simulate similar data as the one collected. Differntly from the collected data the function allow to specify all the paramenters that will shape the data. Set the handle ```Simulation =  True``` to simulate and recover the data using the model.
+
+Multiple parameters need to be passed to the ```SimulateData``` function as dictionary. Default parameters are provided.
+```
+{'nsubj':70, 'ntrial':15, 'nseq':10,                                  # experiment parameters
+'b0_alpha':0.451, 'b1_alpha':0.162, 'b0_seq':0.092, 'b1_seq':0.034,   # set parameters to change kl across sequences and trials (meta learning) 
+'sim_beta0_LT':-0.8, 'sim_beta1_LT':20, 'sim_noise_LT':0.5,           # specify the parameters that define the likelihoods for looking time
+'sim_beta0_SL':-0.5, 'sim_beta1_SL':10, 'sim_noise_SL':0.3,           # specify the parameters that define the likelihoods for saccadic latency
+'sim_lambda0' : 0.5, 'sim_beta_LA' : -50                              # set parameters for lambda 0 and beta_LA}
+ ```
 
 ## Contributors:
 
