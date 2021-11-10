@@ -14,7 +14,7 @@
 </p>
    
       
-<h1 align="center">Learning to learn: evidence for meta-learning in 8-month-old infants</h1>
+<h1 align="center">Learning to learn: 8-month-old infants meta-learn from sparse evidence</h1>
 
 
 
@@ -24,6 +24,8 @@
   - **[The_model](#the-model)**
 - **[Try for yourself](#try-for-yourself )**
 	- **[Install pymc3](#install-pymc3-and-its-dependencies)**
+	- **[Run the model](#run-the-model)**
+
 
 
 ## About the project:
