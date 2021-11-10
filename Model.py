@@ -4,115 +4,94 @@ Created on Fri Jan 22 11:45:35 2021
 
 @author: Francesco Poli, Tommaso Ghilardi, Max Hinne
 """
-
+import os
 import numpy as np
 import pandas as pd
 import pymc3 as pm
 import theano
 import theano.tensor as T
 import arviz as az
-from collections import Counter
 import matplotlib.pyplot as plt
-import os
+from simulation_metalearning import SimulateData 
 
-#Choose sampling method (ADVI vs MCMC)
-useADVI=True  # if True ADVI will be used, if False MCMC will be used
 
-#Set directory
+# Choose sampling method (ADVI vs MCMC)
+useADVI=True
+
+# Set if to run the model using the data collected or if to simulate the data
+Simulation = True
+
+# Set relative directory
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
-# Import Saccadic Latency and Look Away Data
-data= pd.read_csv('df.txt', sep=' ')
-ltime=np.array(data.ltime)
-slat=np.array(data.sl)
-# Import what trials have been watched, and when infants looked away.
-watched = pd.read_csv('watched.txt', sep=' ')
-lookaway = pd.read_csv('lookaway.txt', sep=' ') # how to account for no LA in first three trials?
-# Import sequences that were presented to infants
-sequences= pd.read_csv('sequences_t.csv', header=None).transpose()
-# Set up some stuff for later
-nsubj = len(data.subj.unique())
-subj_idx = data.subj.values
-seq_idx = data.seq.values-1
-ntrial, nseq = 15, 16
+data = pd.read_csv('Data' + os.sep + 'data_SL_LT_LA.csv', sep=',')
 
-# Initialize variables for loop to structure data in the right format for the model
-counts = np.zeros(shape=(len(subj_idx),4)) #counts at trial t
-prev_counts = np.zeros(shape=(len(subj_idx),4)) #counts at trial t-1
-pastseq_counts = np.zeros(shape=(len(subj_idx),4)) #counts at the end of the previous sequence
-offtrials = np.zeros(shape=(len(subj_idx),))
-trial_vect = np.zeros(shape=(len(subj_idx),))
-seq_vect = np.zeros(shape=(len(subj_idx),))
-# for every subject
-for i in data.subj.unique():
-    # reset which is the last sequence that has been watched to zero
-    lastseq_watched=0 
-    seq_count=-1
-    # for every sequence
-    for s in data.seq.unique():
-        # if the sequence has been watched
-        if any(watched.iloc[i*nseq+s-1,:]): 
-            seq_count+=1
-            n=-1
-            # if this is the first sequence that has been observed by the participant
-            if lastseq_watched==0:
-                this_pastseq_counts=np.array([1,1,1,1]) 
-            # if a sequence has been observed before, assign its final counts as pastseq_counts
-            if lastseq_watched>0:
-                this_pastseq_counts=list(this_count.values())
-            lastseq_watched=s
-            this_count=Counter({1:0, 2:0, 3:0, 4:0})
-            # for every trial
-            for t in data.trial.unique():
-                # if the trial has been whatched, update count and assign
-                if watched.iloc[i*nseq+s-1,t-1]==1:
-                    prev_counts[i*nseq*ntrial+ntrial*(s-1)+t-1,:]=list(this_count.values())
-                    this_count.update([sequences.iloc[t-1,s-1]])
-                    counts[i*nseq*ntrial+ntrial*(s-1)+t-1,:]=list(this_count.values())
-                    pastseq_counts[i*nseq*ntrial+ntrial*(s-1)+t-1,:] = this_pastseq_counts
-                    n+=1
-                    trial_vect[i*nseq*ntrial+ntrial*(s-1)+t-1]=n
-                    seq_vect[i*nseq*ntrial+ntrial*(s-1)+t-1]=seq_count                  
+if Simulation:
+    
+    nsubj  = 70  # specify number of subjects
+    ntrial = 15  # specify number of trials for seuence ( <= 15)
+    nseq   = 10  # specify number of sequences (<= 16)
+    
+    #Pass all the parameter to the simulation script using a dictionary
+    
+    simulation_dictionary = {'nsubj':nsubj, 'ntrial':ntrial, 'nseq':nseq,                  # set up some stuff for later
+        'b0_alpha':0.451, 'b1_alpha':0.162, 'b0_seq':0.092, 'b1_seq':0.034,   # set parameter values to change kl across sequences and trials (meta learning) 
+        'sim_beta0_LT':-0.8, 'sim_beta1_LT':20, 'sim_noise_LT':0.5,           # specify the parameters that define the likelihoods for looking time
+        'sim_beta0_SL':-0.5, 'sim_beta1_SL':10, 'sim_noise_SL':0.3,           # specify the parameters that define the likelihoods for saccadic latency
+        'sim_lambda0' : 0.5, 'sim_beta_LA' : -50                              # set parameters for lambda 0 and beta_LA
+        }
+    
+    [subj_idx, seq_idx, seq_vect, trial_vect,
+    kl, ltime, slat,lookaway] = SimulateData(simulation_dictionary, missing = True, Plot =True) # simulate the data
+    
+    
+elif not Simulation:
+    # Import data
+    data= pd.read_csv('Data' + os.sep + 'data_SL_LT_LA.csv', sep=',')
+    
+    ################ Convert data to a pymc-friendly version ######################
+    # total number of subjects
+    nsubj = len(data.subj_idx.unique())
+    # max number of sequences in the task
+    nseq = len(data.seq_idx.unique())
+    # max number of trials in a sequence
+    ntrial = len(data.trial_vect.unique())
+    # index of each subject and each sequence for each trial
+    subj_idx = data.subj_idx.values.astype(int)
+    seq_idx = data.seq_idx.values.astype(int) # objective sequence number
+    seq_vect = data.seq_vect.values # subjective sequence number
+    trial_vect = data.seq_vect.values
+    
+    # use theano instead of numpy (better for pymc3)
+    trial_vect = theano.shared(trial_vect.astype("float64"))
+    seq_vect = theano.shared(seq_vect.astype("float64"))
+    
+    # counts and prev_counts specify the frequency of appearence of the target in each location for each trial of each sequence
+    counts = np.array(data.iloc[:,-8:-4])
+    prev_counts = np.array(data.iloc[:,-4:])
+    
+    ################ Compute KL Divergence ########################################
+    # First, set flat prior for counts
+    flat_count = np.ones(shape=(len(subj_idx),4))
+    # Compute probabilities of seeing the given target in any given location
+    probs = (counts+flat_count)/np.sum(counts+flat_count,axis=1).reshape((counts.shape[0], 1))
+    prev_probs = (prev_counts+flat_count)/np.sum(prev_counts+flat_count,axis=1).reshape((counts.shape[0], 1))
+    # Compute KL-Divergence for every trial
+    kl =  np.sum(probs*np.log2(probs/prev_probs),axis=1)
+    kl = theano.shared(kl.astype("float64"))
+    
+    ################ Dependent Variables ##########################################
+    # If nans are present, variables must be masked to function in theano
+    ltime = np.ma.masked_invalid(data.ltime.values) # looking time to the target (standardized across participants)
+    slat = np.ma.masked_invalid(data.slat.values) # saccadic latency (standardized across participants)
+    lookaway = data.lookaway.values # look-away from the screen (0 for no look-away, 1 for look-away)
 
-# set up stuff in numpy or theano 
-lookaway=np.array(lookaway)
-watched=np.array(watched)
 
-#reshape everything
-watched=watched.reshape(subj_idx.shape).astype(theano.config.floatX)
-lookaway = lookaway.reshape(subj_idx.shape).astype(theano.config.floatX)
-
-# Keep only data in which participants looked at the screen 
-lookaway=lookaway[watched==1]
-ltime=ltime[watched==1]
-slat=slat[watched==1]
-subj_idx=subj_idx[watched==1]
-seq_idx=seq_idx[watched==1]
-counts=counts[watched==1]
-prev_counts=prev_counts[watched==1]
-pastseq_counts=pastseq_counts[watched==1]
-trial_vect=trial_vect[watched==1]
-trial_vect = theano.shared(trial_vect.astype("float64"))
-seq_vect=seq_vect[watched==1]
-seq_vect = theano.shared(seq_vect.astype("float64"))
-
-# set flat prior for counts
-flat_count = np.ones(shape=(len(subj_idx),4))
-# Compute probabilities of seeing the given target in any given location
-probs = (counts+flat_count)/np.sum(counts+flat_count,axis=1).reshape((counts.shape[0], 1))
-prev_probs = (prev_counts+flat_count)/np.sum(prev_counts+flat_count,axis=1).reshape((counts.shape[0], 1))
-# Compute KL-Divergence for every trial
-kl =  np.sum(probs*np.log2(probs/prev_probs),axis=1)
-kl = theano.shared(kl.astype("float64"))
-
-# Mask nans (necessary for pymc to run)
-ltime = np.ma.masked_invalid(ltime)
-slat = np.ma.masked_invalid(slat)
-
+################ Bayesian Model ###############################################
+with pm.Model() as model: 
 # =============================================================================
-# Looking Time (ltime)
-# =============================================================================
-with pm.Model() as model: #           
+# Looking time and saccadic latency
+# =============================================================================       
 ################################# Priors ###################################### 
     # Define beta0, beta1 and error for Looking Time  
     LT0 = pm.Normal('LT0', mu = 0, sigma=10, shape = nsubj)
