@@ -2,8 +2,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.6-green.svg"
               alt="Python 3.6">
-  <a href="the url to paper">
-          <img src="https://img.shields.io/badge/Doi-the actual doi-blue.svg"
+  <a href="https://psyarxiv.com/dc9s6/">
+          <img src="https://img.shields.io/badge/Doi-10.31234/osf.io/dc9s6-blue.svg"
               alt="follow on Twitter"></a>
   <a href="https://twitter.com/intent/follow?screen_name=francescpoli">
           <img src="https://img.shields.io/twitter/follow/francescpoli?style=social&logo=twitter"
