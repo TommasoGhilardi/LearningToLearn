@@ -71,7 +71,7 @@ Information gain is assumed to vary linearly with Saccadic Latency ( ***SL*** ),
 ## Try for yourself 
 
 ### Install pymc3 and its dependencies
-To facilitate the process and aim for the best reproducibility we provide the **pymc_enviroment.yml** file in the [General folder](https://github.com/TommasoGhilardi/LearningToLearn/tree/main/General). To create a conda enviroment called *pymc* run the command:  ```conda env create -f pymc_enviroment.yml``` in the conda terminal.
+To facilitate the process and aim for the best reproducibility we provide the **pymc_enviroment.yml** file in the [General folder](https://github.com/TommasoGhilardi/LearningToLearn/tree/main/General). To create a conda enviroment called *pymc* run the command:  ```conda env create -f pymc_environment.yml``` in the conda terminal.
 After setting the enviroment it can be accessed using ```conda activate pymc```, from here the ilde **Spyder** can be accessed running ```spyder```
 
 ### Run the model
