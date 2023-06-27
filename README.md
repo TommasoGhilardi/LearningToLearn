@@ -35,8 +35,9 @@ Meta-learning is the ability to make use of prior experience to learn how to lea
 ### The task
 Infants were presented with sequences of cue-target trials. In each sequence, the cue consisted of a simple shape appearing in the middle of the screen. The target was the same shape reappearing in one of four screen quadrants around the cue location. The shape was the same across all trials of the sequence but changed across sequences. The target could appear in any location, but one location was more likely than the others. Infants could thus learn to predict the most likely target location of each sequence.
 <br>
+
 <p align="center">
-  <img src="https://www.science.org/cms/10.1126/sciadv.abb5053/asset/07688eb0-7eb8-4560-ae8c-b60b72e79a1e/assets/graphic/abb5053-f1.jpeg" width="300" height="300" />
+  <img src="https://github.com/TommasoGhilardi/LearningToLearn/blob/main/task.jpeg" width="300" />
   <em><br>Fig1 Task representation</em>
 </p>
 
