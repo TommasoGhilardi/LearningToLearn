@@ -14,7 +14,7 @@
 </p>
    
       
-<h1 align="center">Learning to learn: 8-month-old infants meta-learn from sparse evidence</h1>
+<h1 align="center">Eight-Month-Old Infants Meta-Learn by Downweighting Irrelevant Evidence</h1>
 
 
 
